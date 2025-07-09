@@ -4,7 +4,7 @@ setup(
     name="taskforge",
     version="0.1.0",
     description="A robust Python task queue with CLI and API.",
-    author="Your Name",
+    author="Varun Gupta",
     packages=find_packages(),
     install_requires=[
         "fastapi",
