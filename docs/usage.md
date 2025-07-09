@@ -1,19 +1,47 @@
 # Usage Guide
 
+> 📚 **Full documentation:** [https://gvarun01.github.io/task-mq/](https://gvarun01.github.io/task-mq/)
+
 ## CLI Commands
 
 - **Add a job:**
   ```bash
-  task-mq add-job --payload '{"task": "do work"}' --handler dummy
+  taskmq add-job --payload '{"task": "do work"}' --handler dummy
   ```
 - **Run workers:**
   ```bash
-  task-mq run-worker --max-workers 2
+  taskmq run-worker --max-workers 2
   ```
 - **Serve the API:**
   ```bash
-  task-mq serve-api
+  taskmq serve-api
   ```
+
+## Python Library Usage
+
+You can use TaskMQ directly in your own Python scripts:
+
+```python
+from taskmq.jobs.handlers import register_handler
+from taskmq.worker import Worker
+from taskmq.storage.sqlite_backend import SQLiteBackend
+
+@register_handler("mytask")
+def my_handler(job):
+    print("Processing:", job.payload)
+
+backend = SQLiteBackend()
+job_id = backend.insert_job('{"task": "from script"}', handler="mytask")
+
+worker = Worker(max_workers=1, backend=backend)
+worker.start()
+```
+
+## Handler Registration & Discovery
+
+- Register handlers using `@register_handler("name")` in any imported module.
+- **Important:** Handlers must be registered (imported) before starting workers.
+- If you define handlers in your own module, import them before running the worker or API.
 
 ## API Endpoints
 

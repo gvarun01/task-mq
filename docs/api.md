@@ -1,5 +1,7 @@
 # API Reference
 
+> 📚 **Full documentation:** [https://gvarun01.github.io/task-mq/](https://gvarun01.github.io/task-mq/)
+
 TaskMQ exposes a REST API for job management, monitoring, and health checks.
 
 ## Main Endpoints
@@ -34,7 +36,22 @@ TaskMQ exposes a REST API for job management, monitoring, and health checks.
 - All endpoints require a JWT token in the `Authorization: Bearer ...` header.
 - See `users.json` for example users and roles.
 
----
+## Handler Requirement
+- The handler you specify must be registered and importable by the worker process.
+
+## Python API Client Example
+
+```python
+import httpx
+
+# Add a job via API (requires JWT token)
+response = httpx.post(
+    "http://127.0.0.1:8000/add-job",
+    json={"payload": {"task": "api"}, "handler": "dummy"},
+    headers={"Authorization": "Bearer <your_token>"}
+)
+print(response.json())
+```
 
 ## Full API Docs
 
