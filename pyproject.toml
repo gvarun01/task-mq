@@ -15,7 +15,7 @@ dependencies = [
     "fastapi",
     "prometheus_client",
     "python-jose",
-    "click"
+    "click",
     "PyJWT"
 ]
 
