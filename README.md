@@ -160,11 +160,3 @@ print(response.json())
 Pull requests and issues are welcome! See [CONTRIBUTING.md](docs/contributing.md) for guidelines.
 
 ---
-
-## License
-
-MIT License. See [LICENSE](LICENSE).
-
----
-
-**Author:** Varun Gupta ([gvarun01](https://github.com/gvarun01))
