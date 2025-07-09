@@ -15,6 +15,12 @@ setup(
         "click",
         # sqlite3 is part of the Python standard library
     ],
+    extras_require={
+        "test": [
+            "pytest",
+            "httpx"
+        ]
+    },
     entry_points={
         "console_scripts": [
             "task-mq = taskmq.cli:main"

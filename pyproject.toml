@@ -21,6 +21,12 @@ dependencies = [
 [project.scripts]
 task-mq = "taskmq.cli:main" 
 
+[project.optional-dependencies]
+test = [
+    "pytest",
+    "httpx"
+]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 
