@@ -3,12 +3,13 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "taskforge"
+name = "task-mq"
 version = "0.1.0"
 description = "A robust Python task queue with CLI and API."
 authors = [
-    { name = "Your Name" }
+    { name = "Varun Gupta", email = "varungupta8976@gmail.com" }
 ]
+urls = { "Homepage" = "https://github.com/gvarun01/task-mq" }
 requires-python = ">=3.8"
 dependencies = [
     "fastapi",
@@ -18,4 +19,10 @@ dependencies = [
 ]
 
 [project.scripts]
-taskforge = "taskforge.cli:main" 
+task-mq = "taskmq.cli:main" 
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.taskmq.scripts]
+test = "PYTHONPATH=\"$(pwd)\" pytest --maxfail=3 --disable-warnings -v" 

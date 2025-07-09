@@ -1,7 +1,7 @@
 import argparse
 import time
-from taskforge.storage import sqlite_backend
-from taskforge import worker
+from taskmq.storage import sqlite_backend
+from taskmq import worker
 import sys
 
 
@@ -21,7 +21,7 @@ def run_worker(args):
 def serve_api(args):
     import uvicorn
     print("Starting API server on http://127.0.0.1:8000 ...")
-    uvicorn.run("taskforge.api_server:app", host="127.0.0.1", port=8000, reload=False)
+    uvicorn.run("taskmq.api_server:app", host="127.0.0.1", port=8000, reload=False)
 
 def add_job(args):
     backend = sqlite_backend.SQLiteBackend()

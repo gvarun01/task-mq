@@ -1,9 +1,9 @@
 import click
 import time
-from taskforge.storage import sqlite_backend
-from taskforge import worker
+from taskmq.storage import sqlite_backend
+from taskmq import worker
 import json
-from taskforge.jobs.handlers import register_handler, HANDLERS
+from taskmq.jobs.handlers import register_handler, HANDLERS
 
 @click.group()
 def cli():
@@ -27,7 +27,7 @@ def serve_api():
     """Start the FastAPI server."""
     import uvicorn
     click.echo("Starting API server on http://127.0.0.1:8000 ...")
-    uvicorn.run("taskforge.api_server:app", host="127.0.0.1", port=8000, reload=False)
+    uvicorn.run("taskmq.api_server:app", host="127.0.0.1", port=8000, reload=False)
 
 @cli.command()
 @click.option('--payload', default=None, help='Payload for the job (as JSON string)')

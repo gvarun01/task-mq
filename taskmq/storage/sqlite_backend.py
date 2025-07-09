@@ -1,10 +1,10 @@
 import sqlite3
 from datetime import datetime, UTC, timedelta
 from typing import Optional, Any
-from taskforge.storage.base import Job, JobStatus
+from taskmq.storage.base import Job, JobStatus
 from abc import ABC, abstractmethod
 
-DB_PATH = 'taskforge.db'
+DB_PATH = 'taskmq.db'
 
 class QueueBackend(ABC):
     @abstractmethod

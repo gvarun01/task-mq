@@ -2,13 +2,13 @@ import time
 import threading
 from concurrent.futures import ThreadPoolExecutor
 from typing import Callable, Optional
-from taskforge.storage.base import JobStatus
+from taskmq.storage.base import JobStatus
 from datetime import datetime, UTC, timedelta
 import os
 from prometheus_client import Counter, Gauge, Summary
-from taskforge.storage.sqlite_backend import QueueBackend, SQLiteBackend
+from taskmq.storage.sqlite_backend import QueueBackend, SQLiteBackend
 import uuid
-from taskforge.jobs.handlers import HANDLERS, register_handler, get_handler
+from taskmq.jobs.handlers import HANDLERS, register_handler, get_handler
 
 FAILED_LOG_PATH = 'failed_jobs.log'
 HEARTBEAT_PATH = 'worker_heartbeat.txt'

@@ -1,11 +1,11 @@
 import pytest
 from click.testing import CliRunner
-from taskforge.cli import cli
-from taskforge.storage.sqlite_backend import SQLiteBackend
+from taskmq.cli import cli
+from taskmq.storage.sqlite_backend import SQLiteBackend
 import time
 import threading
-from taskforge.worker import Worker
-from taskforge.jobs.handlers import register_handler
+from taskmq.worker import Worker
+from taskmq.jobs.handlers import register_handler
 
 handler_called_event = threading.Event()
 handler_payload = {}

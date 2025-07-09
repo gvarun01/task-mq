@@ -1,6 +1,6 @@
 import pytest
-from taskforge.storage.sqlite_backend import SQLiteBackend
-from taskforge.storage.base import JobStatus
+from taskmq.storage.sqlite_backend import SQLiteBackend
+from taskmq.storage.base import JobStatus
 
 @pytest.fixture
 def backend():

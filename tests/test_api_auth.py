@@ -1,6 +1,6 @@
 import pytest
 from fastapi.testclient import TestClient
-from taskforge.api_server import app, JWT_SECRET, JWT_ALGO
+from taskmq.api_server import app, JWT_SECRET, JWT_ALGO
 import jwt
 
 client = TestClient(app)

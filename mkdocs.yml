@@ -1,0 +1,16 @@
+site_name: TaskMQ
+site_description: Modern Python task queue for developers
+site_author: Varun Gupta
+repo_url: https://github.com/gvarun01/task-mq
+repo_name: gvarun01/task-mq
+
+theme:
+  name: material
+
+nav:
+  - Home: index.md
+  - Quickstart: quickstart.md
+  - Usage: usage.md
+  - Handlers: handlers.md
+  - API Reference: api.md
+  - Contributing: contributing.md

@@ -24,4 +24,4 @@ jobs:
         pip install .[test]
     - name: Run tests
       run: |
-        pytest --maxfail=1 --disable-warnings -v 
+        PYTHONPATH=$(pwd) pytest --maxfail=1 --disable-warnings -v 

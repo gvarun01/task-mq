@@ -1,6 +1,6 @@
 # TaskForge
 
-[![CI](https://github.com/yourusername/taskforge/actions/workflows/ci.yml/badge.svg)](https://github.com/yourusername/taskforge/actions)
+[![CI](https://github.com/yourusername/taskmq/actions/workflows/ci.yml/badge.svg)](https://github.com/yourusername/taskmq/actions)
 
 TaskForge is a Python-based task queue system designed for robust and extensible background job processing. It features a command-line interface (CLI) for managing workers and jobs, a RESTful API for programmatic interaction, a flexible job handler registry, JWT-based authentication, Prometheus monitoring, and uses SQLite as its default storage backend.
 
@@ -11,7 +11,7 @@ TaskForge is a Python-based task queue system designed for robust and extensible
     *   Allows scheduling of jobs for future execution.
     *   Enables periodic job execution at defined intervals.
     *   Concurrent task processing using a thread pool for workers.
-*   🖥️ **Command-Line Interface (CLI)**: Powered by Click, the `taskforge` CLI allows you to:
+*   🖥️ **Command-Line Interface (CLI)**: Powered by Click, the `taskmq` CLI allows you to:
     *   Run worker processes (`run-worker`).
     *   Add new jobs to the queue (`add-job`).
     *   Start the API server (`serve-api`).
@@ -51,7 +51,7 @@ TaskForge is a Python-based task queue system designed for robust and extensible
 1.  **Clone the repository (if you haven't already):**
     ```bash
     git clone <repository-url>
-    cd taskforge
+    cd taskmq
     ```
 
 2.  **Create and activate a virtual environment (recommended):**
@@ -68,19 +68,19 @@ TaskForge is a Python-based task queue system designed for robust and extensible
 ## Running the Application
 
 ### 1. Initialize the Database
-The SQLite database (`taskforge.db`) will be automatically created in the root directory when the application first tries to access it (e.g., when adding a job or starting a worker).
+The SQLite database (`taskmq.db`) will be automatically created in the root directory when the application first tries to access it (e.g., when adding a job or starting a worker).
 
 ### 2. Run the Worker
 To start a worker process that consumes jobs from the queue:
 ```bash
-taskforge run-worker --max-workers 2 # Example with 2 concurrent worker threads
+taskmq run-worker --max-workers 2 # Example with 2 concurrent worker threads
 ```
-The worker will look for jobs in the `taskforge.db` SQLite database.
+The worker will look for jobs in the `taskmq.db` SQLite database.
 
 ### 3. Serve the API
 To start the FastAPI server:
 ```bash
-taskforge serve-api
+taskmq serve-api
 ```
 The API server will be available at `http://127.0.0.1:8000`.
 *   API documentation (Swagger UI) can be accessed at `http://127.0.0.1:8000/docs`.
@@ -89,7 +89,7 @@ The API server will be available at `http://127.0.0.1:8000`.
 ### 4. Add a Job (via CLI)
 To add a new job to the queue:
 ```bash
-taskforge add-job --payload '{"message": "Hello from CLI"}' --handler dummy
+taskmq add-job --payload '{"message": "Hello from CLI"}' --handler dummy
 ```
 This adds a job with the specified JSON payload, to be processed by the "dummy" handler. The `dummy` handler is pre-registered for testing and prints the job details.
 
@@ -99,21 +99,21 @@ This adds a job with the specified JSON payload, to be processed by the "dummy" 
 
 *   **Add a job with a specific handler:**
     ```bash
-    taskforge add-job --payload '{"data": "important_task"}' --handler my_custom_handler
+    taskmq add-job --payload '{"data": "important_task"}' --handler my_custom_handler
     ```
 
 *   **Run a worker with a specific number of threads:**
     ```bash
-    taskforge run-worker --max-workers 4
+    taskmq run-worker --max-workers 4
     ```
 
 *   **Start the API server (default port 8000):**
     ```bash
-    taskforge serve-api
+    taskmq serve-api
     ```
 
 ### API
-Once the API server is running (`taskforge serve-api`), you can interact with it using any HTTP client (e.g., `curl`, Postman, or `httpx` in Python).
+Once the API server is running (`taskmq serve-api`), you can interact with it using any HTTP client (e.g., `curl`, Postman, or `httpx` in Python).
 
 *   **Login (to obtain a JWT token):**
     *   Endpoint: `POST /login`
@@ -137,10 +137,10 @@ Once the API server is running (`taskforge serve-api`), you can interact with it
 
 You can define custom Python functions to process specific types of jobs.
 
-1.  **Create or modify `taskforge/jobs/handlers.py`:**
+1.  **Create or modify `taskmq/jobs/handlers.py`:**
 
     ```python
-    from taskforge.jobs.handlers import register_handler
+    from taskmq.jobs.handlers import register_handler
     import json # Or any other library you need
 
     @register_handler("my_custom_handler")
@@ -159,10 +159,10 @@ You can define custom Python functions to process specific types of jobs.
         pass
     ```
 
-2.  **Ensure your worker can find these handlers.** The application automatically discovers handlers registered in `taskforge.jobs.handlers.py`.
+2.  **Ensure your worker can find these handlers.** The application automatically discovers handlers registered in `taskmq.jobs.handlers.py`.
 
 3.  **Add jobs specifying your handler:**
-    *   Via CLI: `taskforge add-job --payload '{"data": "important_task"}' --handler my_custom_handler`
+    *   Via CLI: `taskmq add-job --payload '{"data": "important_task"}' --handler my_custom_handler`
     *   Via API: When adding a job, include `"handler": "my_custom_handler"` in the request body.
 
 ## Testing
@@ -198,7 +198,7 @@ The project uses `pytest` for testing.
 ├── README.md                 # This file
 ├── requirements.txt          # Main application dependencies
 ├── setup.py                  # Setuptools script for packaging
-├── taskforge/                # Main application package
+├── taskmq/                # Main application package
 │   ├── __init__.py
 │   ├── api_server.py         # FastAPI application, endpoints
 │   ├── cli.py                # Click-based command-line interface

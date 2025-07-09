@@ -1,8 +1,8 @@
 import pytest
 import time
-from taskforge.worker import Worker
-from taskforge.storage.sqlite_backend import SQLiteBackend
-from taskforge.jobs.handlers import HANDLERS, register_handler
+from taskmq.worker import Worker
+from taskmq.storage.sqlite_backend import SQLiteBackend
+from taskmq.jobs.handlers import HANDLERS, register_handler
 
 @pytest.fixture
 def backend():
