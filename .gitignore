@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# Test and coverage
+.coverage
+.cache/
+.pytest_cache/
+
+# Local database and logs
+taskforge.db
+queue_sentry.db
+worker_heartbeat.txt
+failed_jobs.log
+
+# IDE/editor
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# OS
+Thumbs.db
+
+# Docker
+*.pid
+
+# Misc
+*.log 

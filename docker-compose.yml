@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  api:
+    build: .
+    command: uvicorn queue_sentry.api_server:app --host 0.0.0.0 --port 8000 --no-access-log
+    ports:
+      - "8000:8000"
+      - "9090:9090"  # For Prometheus metrics if needed
+    volumes:
+      - queue_data:/app/queue_sentry.db
+    restart: unless-stopped
+
+  worker:
+    build: .
+    command: python main.py --worker --max-workers 1
+    volumes:
+      - queue_data:/app/queue_sentry.db
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  producer:
+    build: .
+    command: python main.py --producer
+    volumes:
+      - queue_data:/app/queue_sentry.db
+    depends_on:
+      - api
+    restart: "no"
+
+volumes:
+  queue_data: 
