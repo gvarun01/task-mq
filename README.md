@@ -236,4 +236,4 @@ This project is licensed under the Apache License 2.0. See the `LICENSE` file fo
 
 ## Author
 
-This project is maintained by "Your Name" (as specified in `setup.py`).
+This project is maintained by "Varun Gupta".
