@@ -2,6 +2,9 @@
 
 [![PyPI version](https://img.shields.io/pypi/v/task-mq.svg)](https://pypi.org/project/task-mq/)
 [![CI](https://github.com/gvarun01/task-mq/actions/workflows/ci.yml/badge.svg)](https://github.com/gvarun01/task-mq/actions)
+[![Docs](https://img.shields.io/badge/docs-latest-blue.svg)](https://gvarun01.github.io/task-mq/)
+[![Python Versions](https://img.shields.io/pypi/pyversions/task-mq.svg)](https://pypi.org/project/task-mq/)
+
 
 **TaskMQ** is a modern, developer-friendly Python task queue and job processing framework. It helps you run background jobs, automate workflows, and build scalable systems with ease.
 
