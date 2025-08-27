@@ -4,32 +4,157 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "task-mq"
-version = "0.1.0"
-description = "A robust Python task queue with CLI and API."
+version = "0.1.1"
+description = "Modern, developer-friendly Python task queue and job processing framework with CLI, API, and pluggable storage backends for scalable background job processing."
+readme = "README.md"
 authors = [
     { name = "Varun Gupta", email = "varungupta8976@gmail.com" }
 ]
-urls = { "Homepage" = "https://github.com/gvarun01/task-mq" }
+maintainers = [
+    { name = "Varun Gupta", email = "varungupta8976@gmail.com" }
+]
+keywords = [
+    "task-queue",
+    "job-processing", 
+    "background-jobs",
+    "worker",
+    "async",
+    "scheduler",
+    "cli",
+    "api",
+    "fastapi",
+    "prometheus",
+    "sqlite",
+    "redis"
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: System :: Distributed Computing",
+    "Topic :: Internet :: WWW/HTTP :: HTTP Servers",
+    "Framework :: FastAPI"
+]
+urls = { "Homepage" = "https://github.com/gvarun01/task-mq", "Repository" = "https://github.com/gvarun01/task-mq", "Documentation" = "https://gvarun01.github.io/task-mq/", "Issue Tracker" = "https://github.com/gvarun01/task-mq/issues", "Changelog" = "https://github.com/gvarun01/task-mq/releases" }
+
+license = { file = "LICENSE" }
 requires-python = ">=3.8"
 dependencies = [
-    "fastapi",
-    "prometheus_client",
-    "python-jose",
-    "click",
-    "PyJWT"
+    "fastapi>=0.68.0",
+    "prometheus_client>=0.12.0",
+    "python-jose[cryptography]>=3.3.0",
+    "click>=8.0.0",
+    "PyJWT>=2.4.0",
+    "uvicorn[standard]>=0.15.0"
 ]
 
 [project.scripts]
-task-mq = "taskmq.cli:main" 
+taskmq = "taskmq.cli:main"
 
 [project.optional-dependencies]
+dev = [
+    "pytest>=6.0",
+    "httpx>=0.24.0",
+    "pytest-cov>=3.0.0",
+    "black>=22.0.0",
+    "isort>=5.10.0",
+    "flake8>=4.0.0",
+    "mypy>=0.910"
+]
 test = [
-    "pytest",
-    "httpx"
+    "pytest>=6.0",
+    "httpx>=0.24.0",
+    "pytest-cov>=3.0.0"
+]
+redis = [
+    "redis>=4.0.0"
+]
+docs = [
+    "mkdocs>=1.4.0",
+    "mkdocs-material>=8.0.0"
 ]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_functions = ["test_*"]
+addopts = [
+    "--strict-markers",
+    "--strict-config",
+    "--disable-warnings",
+    "-v"
+]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests"
+]
+
+[tool.coverage.run]
+source = ["taskmq"]
+omit = [
+    "*/tests/*",
+    "*/venv/*",
+    "*/.venv/*"
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError"
+]
+
+[tool.black]
+line-length = 88
+target-version = ['py38']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+)/
+'''
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+line_length = 88
+known_first_party = ["taskmq"]
+
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
 
 [tool.taskmq.scripts]
-test = "PYTHONPATH=\"$(pwd)\" pytest --maxfail=3 --disable-warnings -v" 
+test = "PYTHONPATH=\"$(pwd)\" pytest --maxfail=3 --disable-warnings -v"
+test-cov = "PYTHONPATH=\"$(pwd)\" pytest --cov=taskmq --cov-report=html --cov-report=term-missing"
+lint = "flake8 taskmq tests"
+format = "black taskmq tests && isort taskmq tests"
+type-check = "mypy taskmq" 
