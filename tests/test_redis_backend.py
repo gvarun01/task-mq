@@ -1,15 +1,24 @@
 import pytest
 import time
 from datetime import datetime, timedelta, UTC
-from taskmq.storage.redis_backend import RedisBackend
 from taskmq.storage.base import JobStatus
 import os
+
+# Try to import redis backend
+try:
+    from taskmq.storage.redis_backend import RedisBackend
+    REDIS_AVAILABLE = True
+except ImportError:
+    REDIS_AVAILABLE = False
+    RedisBackend = None
 
 # Skip if redis is not available or not configured
 redis_url = os.getenv("TASKMQ_REDIS_URL", "redis://localhost:6379/0")
 
 @pytest.fixture
 def redis_backend():
+    if not REDIS_AVAILABLE:
+        pytest.skip("Redis package not installed")
     try:
         backend = RedisBackend(redis_url=redis_url)
         if not backend.check_health():
@@ -17,8 +26,6 @@ def redis_backend():
         # Clean up
         backend.redis.flushdb()
         return backend
-    except ImportError:
-        pytest.skip("Redis package not installed")
     except Exception:
         pytest.skip("Redis connection failed")
 

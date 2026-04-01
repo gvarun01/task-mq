@@ -1,15 +1,15 @@
 import pytest
 import os
-import time
 import uuid
 from taskmq.storage.sqlite_backend import SQLiteBackend
-from taskmq.storage.redis_backend import RedisBackend
 
 # Check if Redis is available
 redis_url = os.getenv("TASKMQ_REDIS_URL", "redis://localhost:6379/0")
 redis_available = False
+RedisBackend = None
 try:
     import redis
+    from taskmq.storage.redis_backend import RedisBackend
     r = redis.from_url(redis_url)
     r.ping()
     redis_available = True
