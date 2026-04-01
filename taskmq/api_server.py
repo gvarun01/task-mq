@@ -1,20 +1,18 @@
-from fastapi import FastAPI, HTTPException, Depends, status, Request
+from fastapi import FastAPI, HTTPException, Depends, Request
 from fastapi.responses import JSONResponse
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from prometheus_client import make_asgi_app, Counter, Summary
-import sqlite3
 import os
-import time
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 import json
 import jwt
-from taskmq.storage import sqlite_backend, base
+from taskmq.storage import base, get_backend
 
 app = FastAPI()
 
 HEARTBEAT_PATH = 'worker_heartbeat.txt'
 HEARTBEAT_TIMEOUT = 10  # seconds
-JWT_SECRET = 'supersecretkey'  # In production, use env var
+JWT_SECRET = os.environ.get('TASKMQ_JWT_SECRET', 'supersecretkey-change-in-production')
 JWT_ALGO = 'HS256'
 USERS_PATH = os.path.join(os.path.dirname(__file__), 'users.json')
 
@@ -45,7 +43,7 @@ def create_token(username, role):
     payload = {
         'sub': username,
         'role': role,
-        'exp': datetime.utcnow() + timedelta(hours=1)
+        'exp': datetime.now(UTC) + timedelta(hours=1)
     }
     return jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGO)
 
@@ -84,17 +82,18 @@ def login(data: dict):
 
 @app.post('/add-job')
 def add_job(data: dict, user=Depends(require_role(['admin']))):
-    backend = sqlite_backend.SQLiteBackend()
+    backend = get_backend()
     payload = data.get('payload')
+    priority = data.get('priority', 0)
     if not payload:
         raise HTTPException(status_code=400, detail='Missing payload')
-    job_id = backend.insert_job(payload)
+    job_id = backend.insert_job(payload, priority=priority)
     queue_jobs_total.inc()
-    return {'status': 'ok', 'job_id': job_id, 'payload': payload}
+    return {'status': 'ok', 'job_id': job_id, 'payload': payload, 'priority': priority}
 
 @app.post('/cancel')
 def cancel_job(data: dict, user=Depends(require_role(['admin']))):
-    backend = sqlite_backend.SQLiteBackend()
+    backend = get_backend()
     job_id = data.get('job_id')
     job = backend.get_job(job_id)
     if not job:
@@ -105,7 +104,7 @@ def cancel_job(data: dict, user=Depends(require_role(['admin']))):
 
 @app.post('/retry')
 def retry_job(data: dict, user=Depends(require_role(['admin', 'worker']))):
-    backend = sqlite_backend.SQLiteBackend()
+    backend = get_backend()
     job_id = data.get('job_id')
     job = backend.get_job(job_id)
     if not job:
@@ -114,23 +113,47 @@ def retry_job(data: dict, user=Depends(require_role(['admin', 'worker']))):
     queue_jobs_retried.inc()
     return {'status': 'retrying', 'job_id': job_id}
 
+@app.get('/job/{job_id}')
+def get_job(job_id: int, user=Depends(require_role(['admin', 'worker']))):
+    backend = get_backend()
+    job = backend.get_job(job_id)
+    if not job:
+        raise HTTPException(status_code=404, detail='Job not found')
+    return {
+        'id': job.id,
+        'status': job.status.value,
+        'priority': job.priority,
+        'payload': job.payload,
+        'result': job.result,
+        'error_log': job.error_log,
+        'retries': job.retries,
+        'created_at': job.created_at.isoformat(),
+        'scheduled_for': job.scheduled_for.isoformat()
+    }
+
 @app.get("/health")
 def health():
-    try:
-        conn = sqlite3.connect(base.DB_PATH)
-        conn.execute("SELECT 1")
-        conn.close()
-    except Exception:
+    backend = get_backend()
+    if not backend.check_health():
         return JSONResponse(status_code=500, content={"status": "db_error"})
+    
+    # Only check heartbeat file if using SQLite (assuming local worker)
+    # Or just keep it as is, but handle missing file gracefully
     try:
-        with open(HEARTBEAT_PATH, 'r') as f:
-            timestamp_str = f.read().strip()
-            last_seen = datetime.fromisoformat(timestamp_str)
-            if datetime.utcnow() - last_seen < timedelta(seconds=HEARTBEAT_TIMEOUT):
-                return {"status": "ok", "worker": "alive"}
-            else:
-                return {"status": "degraded", "worker": "not_recently_alive"}
-    except Exception:
+        if os.path.exists(HEARTBEAT_PATH):
+            with open(HEARTBEAT_PATH, 'r') as f:
+                timestamp_str = f.read().strip()
+                last_seen = datetime.fromisoformat(timestamp_str)
+                # Ensure last_seen is timezone-aware for comparison
+                if last_seen.tzinfo is None:
+                    last_seen = last_seen.replace(tzinfo=UTC)
+                if datetime.now(UTC) - last_seen < timedelta(seconds=HEARTBEAT_TIMEOUT):
+                    return {"status": "ok", "worker": "alive"}
+                else:
+                    return {"status": "degraded", "worker": "not_recently_alive"}
+        else:
+             return {"status": "ok", "worker": "unknown"} # If no file, maybe worker is remote
+    except (OSError, ValueError):
         return {"status": "error", "worker": "not_reporting"}
 
 metrics_app = make_asgi_app()

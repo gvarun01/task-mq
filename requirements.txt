@@ -2,3 +2,5 @@ fastapi
 prometheus_client 
 pyjwt
 httpx 
+redis
+pytest

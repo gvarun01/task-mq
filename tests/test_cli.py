@@ -1,38 +1,64 @@
 import pytest
 from click.testing import CliRunner
+from unittest.mock import patch, MagicMock
 from taskmq.cli import cli
-from taskmq.storage.sqlite_backend import SQLiteBackend
-import threading
-from taskmq.worker import Worker
-from taskmq.jobs import handlers
+from taskmq.storage.base import Job, JobStatus
+from datetime import datetime, UTC
+import json
 
 @pytest.fixture
-def backend():
-    return SQLiteBackend()
+def runner():
+    return CliRunner()
 
-def test_cli_add_job_and_worker(backend):
-    handler_called_event = threading.Event()
-    original_dummy_handler = handlers.HANDLERS["dummy"]
+@pytest.fixture
+def mock_backend():
+    with patch("taskmq.cli.get_backend") as mock:
+        backend_instance = MagicMock()
+        mock.return_value = backend_instance
+        yield backend_instance
+
+def test_add_job(runner, mock_backend):
+    mock_backend.insert_job.return_value = 100
     
-    def patched_dummy_handler(job):
-        handler_called_event.set()
-        return original_dummy_handler(job)
+    result = runner.invoke(cli, ['add-job', '--payload', '{"task": "cli"}', '--handler', 'test'])
     
-    handlers.HANDLERS["dummy"] = patched_dummy_handler
-    try:
-        runner = CliRunner()
-        # Add a job with the persistent 'dummy' handler
-        result = runner.invoke(cli, ["add-job", "--payload", '{"task": "cli test"}', "--handler", "dummy"])
+    assert result.exit_code == 0
+    assert "Inserted job with ID: 100" in result.output
+    mock_backend.insert_job.assert_called_once()
+
+def test_get_job(runner, mock_backend):
+    job = Job(
+        id=100,
+        status=JobStatus.SUCCESS,
+        payload={"task": "cli"},
+        created_at=datetime.now(UTC),
+        result="CLI Result"
+    )
+    mock_backend.get_job.return_value = job
+    
+    result = runner.invoke(cli, ['get-job', '100'])
+    
+    assert result.exit_code == 0
+    assert "Job ID: 100" in result.output
+    assert "Result: CLI Result" in result.output
+
+def test_run_worker(runner):
+    # This is harder to test because it starts a loop.
+    # We can mock Worker class.
+    with patch("taskmq.cli.worker.Worker") as MockWorker:
+        worker_instance = MockWorker.return_value
+        
+        # We need to interrupt the worker, but run_worker catches KeyboardInterrupt
+        # So we can just let it run start() and verify it was called.
+        # But start() blocks.
+        # We can make start() raise KeyboardInterrupt immediately.
+        worker_instance.start.side_effect = KeyboardInterrupt
+        
+        result = runner.invoke(cli, ['run-worker', '--max-workers', '2'])
+        
         assert result.exit_code == 0
-        assert "Inserted job with ID" in result.output
-        # Now run the worker in a thread
-        w = Worker(max_workers=1, backend=backend)
-        t = threading.Thread(target=w.start)
-        t.start()
-        # Wait for the handler to be called or timeout
-        handler_called_event.wait(timeout=5)
-        w.stop()
-        t.join()
-        assert handler_called_event.is_set(), "Handler was not called"
-    finally:
-        handlers.HANDLERS["dummy"] = original_dummy_handler
+        assert "Starting worker pool" in result.output
+        assert "Stopping worker..." in result.output
+        MockWorker.assert_called_with(max_workers=2)
+        worker_instance.start.assert_called_once()
+        worker_instance.stop.assert_called_once()

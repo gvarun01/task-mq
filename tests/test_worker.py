@@ -1,15 +1,12 @@
 import pytest
 import time
 from taskmq.worker import Worker
-from taskmq.storage.sqlite_backend import SQLiteBackend
 from taskmq.jobs import handlers
 import threading
 
-@pytest.fixture
-def backend():
-    return SQLiteBackend()
 
-def test_worker_processes_job(backend):
+def test_worker_processes_job(sqlite_backend):
+    """Test that worker correctly picks up and processes a job."""
     handler_called_event = threading.Event()
     original_dummy_handler = handlers.HANDLERS["dummy"]
 
@@ -19,8 +16,8 @@ def test_worker_processes_job(backend):
 
     handlers.HANDLERS["dummy"] = patched_dummy_handler
     try:
-        job_id = backend.insert_job('{"task": "pytest"}', handler="dummy")
-        w = Worker(max_workers=1, backend=backend)
+        job_id = sqlite_backend.insert_job('{"task": "pytest"}', handler="dummy")
+        w = Worker(max_workers=1, backend=sqlite_backend, poll_interval=0.1)
         # Run worker in a thread for a short time
         t = threading.Thread(target=w.start)
         t.start()

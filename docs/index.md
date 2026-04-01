@@ -1,69 +1,63 @@
-# TaskMQ
+# TaskMQ Documentation
 
 [![PyPI version](https://img.shields.io/pypi/v/task-mq.svg)](https://pypi.org/project/task-mq/)
 [![CI](https://github.com/gvarun01/task-mq/actions/workflows/ci.yml/badge.svg)](https://github.com/gvarun01/task-mq/actions)
 
 **TaskMQ** is a modern, developer-friendly Python task queue and job processing framework for background jobs, automation, and scalable systems.
 
-- 🚀 Simple CLI and API for adding and running jobs
-- 🧩 Register custom Python handlers for any task
-- 🔐 Secure, observable, and production-ready
-- 📦 Pluggable storage backends (SQLite, Redis stub)
-- 🧪 Full test suite and CI
+## Features
 
----
+- Simple CLI and REST API for job management
+- Decorator-based custom handler registration
+- Pluggable storage backends (SQLite, Redis)
+- Configurable retry policies and job scheduling
+- JWT authentication and Prometheus metrics
+- Full async handler support
 
-## 📚 Documentation
+## Documentation
 
-- **Full documentation:** [https://gvarun01.github.io/task-mq/](https://gvarun01.github.io/task-mq/)
-- [Quickstart](quickstart.md)
-- [Usage Guide](usage.md)
-- [Writing Handlers](handlers.md)
-- [API Reference](api.md)
+| Guide | Description |
+|-------|-------------|
+| [Quick Start](quickstart.md) | Get up and running in 5 minutes |
+| [Usage Guide](usage.md) | Detailed CLI and library usage |
+| [Writing Handlers](handlers.md) | Create custom job handlers |
+| [API Reference](api.md) | REST API endpoints and authentication |
+| [Contributing](contributing.md) | Development setup and guidelines |
 
----
-
-## Getting Started
-
-### Install from PyPI
+## Installation
 
 ```bash
 pip install task-mq
+
+# With Redis support
+pip install task-mq[redis]
 ```
 
-### Or install from source (for development)
-
-```bash
-git clone https://github.com/gvarun01/task-mq.git
-cd task-mq
-python -m venv .venv && source .venv/bin/activate
-pip install -e .
-```
-
----
-
-## Python Library Usage
-
-You can use TaskMQ directly in your own Python scripts:
+## Quick Example
 
 ```python
 from taskmq.jobs.handlers import register_handler
 from taskmq.worker import Worker
 from taskmq.storage.sqlite_backend import SQLiteBackend
 
-@register_handler("mytask")
-def my_handler(job):
-    print("Processing:", job.payload)
+@register_handler("greet")
+def greet_handler(job):
+    name = job.payload.get("name", "World")
+    return f"Hello, {name}!"
 
 backend = SQLiteBackend()
-job_id = backend.insert_job('{"task": "from script"}', handler="mytask")
+backend.insert_job('{"name": "TaskMQ"}', handler="greet")
 
 worker = Worker(max_workers=1, backend=backend)
 worker.start()
 ```
 
+## Links
+
+- [GitHub Repository](https://github.com/gvarun01/task-mq)
+- [PyPI Package](https://pypi.org/project/task-mq/)
+- [Issue Tracker](https://github.com/gvarun01/task-mq/issues)
+
 ---
 
-TaskMQ is open source and built for real-world developer needs. [View on GitHub](https://github.com/gvarun01/task-mq)
-
-**Author:** Varun Gupta ([gvarun01](https://github.com/gvarun01))
+**Author:** [Varun Gupta](https://github.com/gvarun01)

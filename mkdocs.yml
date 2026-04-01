@@ -1,16 +1,57 @@
 site_name: TaskMQ
-site_description: Modern Python task queue for developers
+site_description: Modern Python task queue and job processing framework
 site_author: Varun Gupta
+site_url: https://gvarun01.github.io/task-mq/
+
 repo_url: https://github.com/gvarun01/task-mq
 repo_name: gvarun01/task-mq
 
 theme:
   name: material
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.sections
+    - toc.integrate
+    - search.suggest
+    - content.code.copy
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
 
 nav:
   - Home: index.md
-  - Quickstart: quickstart.md
-  - Usage: usage.md
-  - Handlers: handlers.md
+  - Quick Start: quickstart.md
+  - Usage Guide: usage.md
+  - Writing Handlers: handlers.md
   - API Reference: api.md
   - Contributing: contributing.md
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - tables
+  - toc:
+      permalink: true
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/gvarun01/task-mq
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/task-mq/

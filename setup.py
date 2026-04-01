@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="task-mq",
-    version="0.1.0",
+    version="0.1.2",
     description="A robust Python task queue with CLI and API.",
     author="Varun Gupta",
     author_email="varungupta8976@gmail.com",
@@ -18,7 +18,8 @@ setup(
     extras_require={
         "test": [
             "pytest",
-            "httpx"
+            "httpx",
+            "pyjwt"
         ]
     },
     entry_points={

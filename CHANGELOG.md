@@ -7,67 +7,71 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.1.1] - 2025-08-27
+## [0.1.2] - 2025-04-01
 
-### 📚 Documentation & Project Enhancement
+### Added
+- Google-style docstrings for public API functions
+- `py.typed` marker file for PEP 561 compliance
+- Ruff configuration for linting and formatting
+- Comprehensive test suite expansion with new test files
 
-#### Added
-- **Comprehensive Project Metadata**: Enhanced `pyproject.toml` with professional description, keywords, and PyPI classifiers
-- **Development Tools Configuration**: Added complete tooling setup for black, isort, mypy, pytest, and coverage
-- **Extended Optional Dependencies**: Added development, testing, Redis, and documentation dependency groups
-- **Professional PyPI Presence**: Improved package discoverability with proper keywords and categorization
-- **Enhanced URL Links**: Added comprehensive project links including documentation, issues, and changelog
+### Changed
+- Replaced deprecated `datetime.utcnow()` with timezone-aware `datetime.now(UTC)`
+- Improved test isolation with unique database files per test
+- CLI now properly handles KeyboardInterrupt for graceful shutdown
+- Complete documentation rewrite with professional formatting
 
-#### Changed
-- **Improved Package Description**: Updated from basic description to comprehensive, professional project summary
-- **CLI Entry Point**: Standardized command from `task-mq` to `taskmq` for consistency
-- **Dependency Specifications**: Added version pinning for all dependencies to ensure stability
-- **Enhanced FastAPI Support**: Added `uvicorn[standard]` and `python-jose[cryptography]` for better production readiness
+### Fixed
+- Removed duplicate `QueueBackend` abstract class definitions
+- Fixed bare except clauses with specific exception types
+- Removed unused imports across codebase
+- Fixed failing tests (retry logic, worker isolation, CLI interrupt handling)
 
-#### Fixed
-- **Project Metadata Completeness**: Added missing maintainer information and license references
-- **Development Workflow**: Configured comprehensive testing, linting, and formatting tools
+### Security
+- JWT secret key now reads from `TASKMQ_JWT_SECRET` environment variable
 
-### 🔧 Technical Improvements
-- **Better Type Safety**: Added mypy configuration with strict type checking
-- **Code Quality**: Configured black, isort, and flake8 for consistent code formatting
-- **Test Coverage**: Enhanced pytest configuration with coverage reporting and custom markers
-- **PyPI Compatibility**: Improved package metadata for better PyPI integration
+## [0.1.1] - 2024-12-18
 
----
+### Added
+- Comprehensive project metadata in `pyproject.toml`
+- Development tools configuration (ruff, mypy, pytest, coverage)
+- Extended optional dependencies for dev, test, redis, and docs
+- Professional PyPI classifiers and keywords
 
-## [0.1.0] - 2025-08-27
+### Changed
+- CLI entry point standardized from `task-mq` to `taskmq`
+- Added version pinning for all dependencies
+- Enhanced FastAPI support with `uvicorn[standard]` and `python-jose[cryptography]`
 
-### 🎉 Initial Release
+### Fixed
+- Added missing maintainer information and license references
+- Configured comprehensive testing and linting tools
 
-#### Added
-- **Core Task Queue Engine**: Background job processing with worker pools
-- **CLI Interface**: Complete command-line interface for job management
-- **REST API**: FastAPI-based API with JWT authentication
-- **Handler System**: Decorator-based job handler registration
-- **Storage Backends**: SQLite backend with Redis stub for future expansion
-- **Monitoring**: Prometheus metrics integration
-- **Docker Support**: Dockerfile and docker-compose configuration
-- **Retry Policies**: Configurable retry strategies (fixed, exponential, none)
-- **Job Scheduling**: Support for future and periodic job execution
-- **Documentation**: Comprehensive documentation with MkDocs
+## [0.1.0] - 2024-12-15
 
-#### Features
-- Multi-threaded worker processing
-- Secure JWT-based API authentication
-- Pluggable storage architecture
-- Production-ready monitoring and metrics
-- Easy deployment with Docker
-- Comprehensive test suite
-- Developer-friendly CLI tools
+### Added
+- Core task queue engine with background job processing
+- Multi-threaded worker pool with configurable concurrency
+- CLI interface for job management (`add-job`, `run-worker`, `serve-api`)
+- REST API with FastAPI and automatic OpenAPI documentation
+- JWT-based authentication with role-based access control
+- Decorator-based handler registration system
+- SQLite storage backend (default)
+- Redis storage backend for production workloads
+- Prometheus metrics integration (`/monitor/metrics`)
+- Retry policies: fixed interval, exponential backoff, none
+- Job scheduling for future execution
+- Periodic/recurring job support
+- Job priority levels (Low, Normal, High)
+- Dead Letter Queue (DLQ) for failed jobs
+- Job replay functionality with handler versioning
+- Graceful shutdown with in-flight job completion
+- Per-job execution timeline and structured logging
+- Docker and docker-compose configuration
+- Comprehensive test suite with pytest
+- MkDocs documentation site
 
----
-
-## Legend
-- 🎉 Major features or initial releases
-- 📚 Documentation improvements
-- 🔧 Technical improvements and fixes
-- 🚀 Performance improvements
-- 🔐 Security enhancements
-- 🐛 Bug fixes
-- ⚠️ Breaking changes
+[Unreleased]: https://github.com/gvarun01/task-mq/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/gvarun01/task-mq/compare/v0.1.1...v0.1.2
+[0.1.1]: https://github.com/gvarun01/task-mq/compare/v0.1.0...v0.1.1
+[0.1.0]: https://github.com/gvarun01/task-mq/releases/tag/v0.1.0

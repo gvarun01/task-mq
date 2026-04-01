@@ -21,8 +21,13 @@ ENV/
 # Local database and logs
 taskforge.db
 queue_sentry.db
+taskmq.db
+*.db
 worker_heartbeat.txt
 failed_jobs.log
+
+# Documentation build output
+site/
 
 # IDE/editor
 .vscode/

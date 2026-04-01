@@ -2,7 +2,6 @@ import argparse
 import time
 from taskmq.storage import sqlite_backend
 from taskmq import worker
-import sys
 
 
 def print_job(job):
